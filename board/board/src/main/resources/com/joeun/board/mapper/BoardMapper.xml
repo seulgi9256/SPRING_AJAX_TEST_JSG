@@ -40,19 +40,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         DELETE FROM board
         WHERE board_no = #{boardNo}
     </delete>
+    
+    <!-- 조회수 조회 -->
+    <select id="searchViews" resultType="int">
+        SELECT views
+        FROM board
+        WHERE board_no = #{boardNo}
+    </select>
 
     <!-- 조회수 업데이트 -->
     <update id="updateViews">
         UPDATE board
            SET views = views + #{count}
-        WHERE boardNo = #{boardNo}
+        WHERE board_no = #{boardNo}
     </update>
 
     <!-- 좋아요 업데이트 -->
     <update id="updateLikes">
         UPDATE board
            SET likes = likes + #{count}
-        WHERE boardNo = #{boardNo}
+        WHERE board_no = #{boardNo}
     </update>
 
 </mapper>

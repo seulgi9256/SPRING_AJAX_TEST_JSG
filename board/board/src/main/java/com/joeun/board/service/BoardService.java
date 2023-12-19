@@ -2,6 +2,8 @@ package com.joeun.board.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.joeun.board.dto.Board;
 
 public interface BoardService {
@@ -20,6 +22,9 @@ public interface BoardService {
 
     // 게시글 삭제
     public int delete(int boardNo) throws Exception;
+
+    // 조회수 조회
+    public int searchViews(@Param("boardNo") int boardNo) throws Exception;
 
     // 조회수 업데이트
     public int updateViews(int count, int boardNo) throws Exception;

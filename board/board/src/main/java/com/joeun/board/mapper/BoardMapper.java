@@ -28,6 +28,9 @@ public interface BoardMapper {
     // 게시글 번호(기본키) 최댓값
     public int maxPk() throws Exception;
 
+    // 조회수 조회
+    public int searchViews(@Param("boardNo") int boardNo) throws Exception;
+
     // 조회수 업데이트
     public int updateViews(@Param("count") int count, @Param("boardNo") int boardNo) throws Exception;
 

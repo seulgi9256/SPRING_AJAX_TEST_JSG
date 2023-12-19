@@ -3,52 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>게시글 목록</title>
+    <title>게시판</title>
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <h1>게시글 목록</h1>
-    <p>커뮤니티 게시글 데이터를 조회합니다.</p>
+    <!-- 사이드 바 -->
+    <aside id="sidebar">
+        <div class="top flex main-end">
+            <a href="javascript:;" id="btn-close">
+                <span class="material-symbols-outlined">close</span>
+            </a>
+        </div>
+        <ul>
+            <li><a href="../index">Home</a></li>
+            <li><a href="../board/list">Board</a></li>
+        </ul>
+    </aside>
 
-    <a href="/board/insert">글쓰기</a>
+    <!-- 헤더 -->
+    <header>
+        <!-- 로그인 | 회원가입 -->
+        <div class="util"></div>
 
-        <!-- 게시글 목록 -->
-        <table class="board">
-            <table border="1">
-                <tr>
-                    <th width="50">번호</th>
-                    <th width="300">제목</th>
-                    <th width="100">작성자</th>
-                    <th width="200">등록일자</th>
-                    <th width="200">수정일자</th>
-                    <th width="100">조회수</th>
-                    <th width="100">좋아요</th>
-                </tr>
+        <!-- 메인 메뉴 -->
+        <div class="menu">
+            <nav>
+                <ul class="pc">
+                    <li><a href="../index">Home</a></li>
+                    <li><a href="../board/list">Board</a></li>
+                </ul>
+                <ul class="mobile">
+                    <li>
+                        <a href="../index"><span class="material-symbols-outlined">home</span></a>
+                    </li>
+                    <li>
+                        <a href="javascript:;" id="btn-menu"><span class="material-symbols-outlined">menu</span></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-                <th:block th:each="board : ${boardList}">
-                    <th:block th:if="${boardList==null}" >
-                        <th:block th:if="${boardList.isEmpty()}">
-                            <tr>
-                                <td colspan="7">조회된 게시물 정보가 없습니다.</td>
-                            </tr>
-                        </th:block>
-                    </th:block>
+    <!-- 메인 -->
+    <section class="main container">
+        <div class="inner">
+            <!-- 제목 영역 -->
+            <div class="main-title">
+                <h1>게시글 목록</h1>
+                <p>커뮤니티 게시글 데이터를 조회합니다.</p>
+            </div>
+            
+            <!-- 검색/필터 -->
+            <div class="btn-box">
+                <!-- 검색 -->
+                <div class="item">
+                    <select name="search-type" id="search-type" class="input-search">
+                        <option value="0">전체</option>
+                        <option value="1">제목</option>
+                        <option value="2">내용</option>
+                        <option value="3">제목+내용</option>
+                        <option value="4">작성자</option>
+                    </select>
+                    <input type="text" name="keyword" id="keyword" class="input-search">
+                    <a href="javascript:;" class="btn" id="btn-search">검색</a>
+                </div>
+                <!-- 필터 -->
+                <div class="item">
+                    <select name="rows" id="rows" class="input-search">
+                        <option value="5">5개씩 보기</option>
+                        <option value="10">10개씩 보기</option>
+                        <option value="30">30개씩 보기</option>
+                        <option value="50">50개씩 보기</option>
+                    </select>
+                </div>
+                <div class="item">
+                    <select name="order" id="order" class="input-search">
+                        <option value="0">최근 순</option>
+                        <option value="1">오래된 순</option>
+                        <option value="2">조회수 순</option>
+                    </select>
+                </div>
+                <div class="item">
+                    <a href="../board/insert" class="btn">글쓰기</a>
+                </div>
+            </div>
+
+            <!-- 게시글 수 -->
+            <div class="info">
+                <p>게시글 <span id="totalCount">0</span> 건이 조회되었습니다.</p>
+            </div>
+
+            <!-- 게시글 목록 -->
+            <table class="board">
+                <thead>
                     <tr>
-                        <td align="center" th:text="${board.boardNo}"></td>
-                        <td><a th:href="|/board/read?boardNo=${board.boardNo}|" th:text="${board.title}"></a></td>
-                        <td align="center" th:text="${board.writer}"></td>
-                        <td align="center"><span th:text="${ #dates.format( board.regDate, 'yyyy-MM-dd HH:mm:ss') }"></span></td>
-                        <td align="center"><span th:text="${ #dates.format( board.updDate, 'yyyy-MM-dd HH:mm:ss') }"></span></td>
-                        <td align="center" th:text="${board.views}"></td>
-                        <td align="center" th:text="${board.likes}"></td>
+                        <td class="num">번호</td>
+                        <td class="title">제목</td>
+                        <td class="writer">작성자</td>
+                        <td class="regDate">등록일자</td>
+                        <td class="updDate">등록일자</td>
+                        <td class="view">조회수</td>
+                        <td class="like">좋아요</td>
                     </tr>
+                </thead>
+                <tbody id="board-data">
+                    <tr th:each="board : ${boardList}">
+                        <td class="num" th:text="${board.boardNo}"></td>
+                        <td class="title"> <a th:href="|/board/read?boardNo=${board.boardNo}|" th:text="${board.title}"></a></td>
+                        <td class="writer" th:text="${board.writer}"></td>
+                        <td class="regDate"><span th:text="${ #dates.format( board.regDate, 'yyyy-MM-dd HH:mm:ss') }"></span></td>
+                        <td class="updDate"><span th:text="${ #dates.format( board.updDate, 'yyyy-MM-dd HH:mm:ss') }"></span></td>
+                        <td class="view" th:text="${board.views}"></td>
+                        <td class="like" th:text="${board.likes}"></td>
+                    </tr>
+                </table>
+                
+                <th:block th:if="${boardList==null}" >
+                    <th:block th:if="${boardList.isEmpty()}">
+                        <tr>
+                            <td colspan="7">조회된 데이터가 없습니다.</td>
+                        </tr>
+                    </th:block>
                 </th:block>
-            </table>
+            </tbody>
 
-        </table>
+            <!-- 페이지네이션 -->
+            <div class="pagination">
+                <a href="javascript:;" class="page-arrow" id="first">&laquo;</a>
+                <a href="javascript:;" class="page-arrow" id="prev">&lsaquo;</a>
+
+                <!-- 페이지 번호 목록 -->
+                <div class="page-list">
+                    <a href="javascript:;" class="page-no">1</a>
+                    <a href="javascript:;" class="page-no">2</a>
+                    <a href="javascript:;" class="page-no">3</a>
+                    <a href="javascript:;" class="page-no">4</a>
+                    <a href="javascript:;" class="page-no">5</a>
+                    <a href="javascript:;" class="page-no">6</a>
+                    <a href="javascript:;" class="page-no">7</a>
+                    <a href="javascript:;" class="page-no">8</a>
+                    <a href="javascript:;" class="page-no">9</a>
+                    <a href="javascript:;" class="page-no">10</a>
+                </div>
+
+                <a href="javascript:;" class="page-arrow" id="next">&rsaquo;</a>
+                <a href="javascript:;" class="page-arrow" id="last">&raquo;</a>
+            </div>
 
 
-    </div>
-</section>
 
+        </div>
+    </section>
+
+    
 </body>
 </html>

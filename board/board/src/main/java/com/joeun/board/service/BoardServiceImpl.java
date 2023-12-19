@@ -45,6 +45,12 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public int searchViews(int boardNo) throws Exception {
+        int result = boardMapper.searchViews(boardNo);
+        return result;
+    }
+
+    @Override
     public int updateViews(int count, int boardNo) throws Exception {
         int result = boardMapper.updateViews(count, boardNo);
         return result;

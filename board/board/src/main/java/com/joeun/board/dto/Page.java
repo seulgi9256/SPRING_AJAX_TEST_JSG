@@ -1,7 +1,7 @@
 // package com.joeun.board.dto;
 
 // @Getter
-// public class Pagination {
+// public class Page {
 
     
 //     private int totalRecordCount;     // 전체 데이터 수

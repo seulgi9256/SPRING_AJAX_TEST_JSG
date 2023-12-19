@@ -4,62 +4,250 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>게시글 수정</title>
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <h1>게시글 수정</h1>
-    <form action="/board/update" method="POST" id="form">
-        <input type="hidden" name="boardNo" th:value="${board.boardNo}">
-        <table>
-            <tr>
-                <td>제목</td>
-                <td>
-                    <input type="text" name="title" th:value="${board.title}">
-                </td>
-            </tr>
-            <tr>
-                <td>작성자</td>
-                <td>
-                    <input type="text" name="writer" th:value="${board.writer}">
-                </td>
-            </tr>
-            <tr>
-                <td>내용</td>
-                <td>
-                    <textarea name="content" cols="40" rows="5" th:text="${board.content}"></textarea>
-                </td>
-            </tr>
-        </table>
-        <div>
-            <button type="button" onclick="moveList()">목록</button>
-            <button type="button" onclick="actionUpdate()">수정</button>
-            <button type="button" onclick="actionDelete()">삭제</button>
+    <!-- 사이드 바 -->
+    <aside id="sidebar">
+        <div class="top flex main-end">
+            <a href="javascript:;" id="btn-close">
+                <span class="material-symbols-outlined">close</span>
+            </a>
         </div>
-    </form>
+        <ul>
+            <li><a href="../index">Home</a></li>
+            <li><a href="../board/list">Board</a></li>
+        </ul>
+    </aside>
+
+    <!-- 헤더 -->
+    <header>
+        <!-- 로그인 | 회원가입 -->
+        <div class="util"></div>
+
+        <!-- 메인 메뉴 -->
+        <div class="menu">
+            <nav>
+                <ul class="pc">
+                    <li><a href="../index">Home</a></li>
+                    <li><a href="../board/list">Board</a></li>
+                </ul>
+                <ul class="mobile">
+                    <li>
+                        <a href="../index"><span class="material-symbols-outlined">home</span></a>
+                    </li>
+                    <li>
+                        <a href="javascript:;" id="btn-menu"><span class="material-symbols-outlined">menu</span></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 메인 -->
+    <section class="main container">
+        <div class="inner">
+            <!-- 제목 영역 -->
+            <div class="main-title">
+                <h1>게시글 수정</h1>
+                <p>커뮤니티 게시글 정보를 수정합니다.<p>
+            </div>
+
+            <!-- 게시글 수정 -->
+            <form action="/board/update" method="post">
+            <input type="hidden" name="boardNo" th:value="${board.boardNo}">
+                <table class="board">
+                    <tr>
+                        <td class="label">제목</td>
+                        <td class="data">
+                            <input type="text" name="title" id="title" class="input-text" th:value="${board.title}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">작성자</td>
+                        <td class="data">
+                            <input type="text" name="writer" id="writer" class="input-text" th:value="${board.writer}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">내용</td>
+                        <td class="data">
+                            <textarea name="content" id="content" cols="30" rows="10" 
+                                    class="input-textarea" th:value="${board.content}"></textarea>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="btn-box">
+                    <div class="item">
+                        <a href="/board/list" class="btn">목록</a>
+                    </div>
+                    <div class="item">
+                        <a href="javascript:;" class="btn btn-update">수정</a>
+                        <a href="javascript:;" class="btn btn-delete">삭제</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- script -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+    <!-- sweetalert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="../js/main.js"></script>
 
     <script>
-        let form = document.getElementById('form')
-        // 👩‍💻 모델 객체를 자바스크립트에서 표현하는 방법
-        let boardNo = "[[${board.boardNo}]]"
+
+        // 현재 URL 가져오기
+        const urlParams = new URLSearchParams(location.search)
+        // ?boardNo=100   (100 <-- 글번호 가져오기)
+        let boardNo = urlParams.get('boardNo')
         
-        // 목록으로 이동
-        function moveList() {
-            location.href = "/board/list"
+        if( boardNo != null ) {
+            getBoard()
+            getFileList()
         }
 
-        // 수정 요청
-        function actionUpdate() {
-            form.submit()
+        // 게시글 조회
+        function getBoard(){
+            const url = 'http://localhost/board/read?boardNo=' + boardNo
+            
+            $.ajax({
+                url     : url,
+                type    : 'GET',
+                success : function(response) {
+                    let board = response
+
+                    $('#title').val(board.title)
+                    $('#writer').val(board.writer)
+                    $('#content').val(board.content)
+                },
+                error   : function(error) {
+
+                }
+
+            })
         }
 
-        // 삭제 요청
-        function actionDelete() {
-            let check = confirm('정말로 삭제하시겠습니까?')
-            if( check ) {
-                form.action = '/board/delete'           // form 태그의 action 속성을 변경
-                form.submit()
+        // 수정 버튼 - 클릭 이벤트
+        $('.btn-update').on('click', function() {
+
+            // 게시글 수정 요청
+            let url = 'http://localhost:8080/board/update?boardNo=' + boardNo
+
+            let title = $('#title').val()
+            let writer = $('#writer').val()
+            let content = $('#content').val()
+
+            $.ajax({
+                url             :   url,
+                type            :   'PUT',
+                data            :   data,
+                contentType     :   false,
+                processData     :   false,
+                success         : function(response, status) {
+                    if( response == 'SUCCESS' ){
+                        // alert('수정이 완료되었습니다.')
+                        Swal.fire(
+                            '완료!',
+                            '수정이 완료되었습니다.',
+                            'success'
+                        ).then((result) => {
+                            if( result.isConfirmed ) {
+                                // 읽기 페이지 이동
+                                location.href = 'http://localhost:8080/board/read?boardNo=' + boardNo
+                            }
+                        })
+
+                    }
+                },
+                error           : function(request, status, error){
+                    // alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                    Swal.fire(
+                        '에러!',
+                        'code:' + request.status,
+                        'error'
+                    )
+                }
+            })
+
+
+            
+        })
+
+        // 삭제 버튼 - 클릭 이벤트
+        $('.btn-delete').on('click', function() {
+
+
+            // let check = confirm('정말로 삭제하시겠습니까?')
+            
+            // if( !check ) 
+            //     return
+
+            Swal.fire({
+                    title: '정말로 삭제하시겠습니까?',
+                    text: "삭제하면 되돌릴 수 없습니다!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: '예',
+                    cancelButtonText: '아니오',
+                }).then((result) => {
+                    // result.isConfirmed : true  [예]
+                    // result.isConfirmed : false  [아니오]
+                    if (result.isConfirmed) {
+                        deleteData(boardNo)
+                    }
+                })
+        })
+
+
+        // 게시글 삭제 요청
+        function deleteData() {
+            let url = 'http://localhost:8080/board'
+
+            let data = {
+                'boardNo' : boardNo
             }
+
+            $.ajax({
+                url             :   url,
+                type            :   'DELETE',
+                data            :   data,
+                dataType        :   'text',                 // 응답 컨텐츠 타입
+                success         : function(response, status) {
+                    if( response == 'SUCCESS' ){
+                        // alert('삭제가 완료되었습니다.')
+                        Swal.fire(
+                            '완료!',
+                            '삭제가 완료되었습니다.',
+                            'success'
+                        ).then((result) => {
+                            if( result.isConfirmed ) {
+                               
+                            }
+                            // 목록 페이지로 이동
+                            location.href = 'http://localhost:8080/board/list'
+                        })
+                    }
+                },
+                error           : function(request, status, error){
+                    // alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                    Swal.fire(
+                        '에러!',
+                        'code:' + request.status,
+                        'error'
+                    )
+                }
+            })
         }
 
     </script>
+
 </body>
 </html>

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.joeun.board.dto.Board;
 import com.joeun.board.service.BoardService;
+import com.joeun.board.service.CommentService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,10 +32,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/board")
 public class BoardController {
 
-    // 한꺼번에 import : alt + shift + O
-
     @Autowired
     private BoardService boardService;
+
+    @Autowired
+    private CommentService commentService;
 
     /**
      * 게시글 목록
@@ -69,10 +71,16 @@ public class BoardController {
      */
     @GetMapping(value="/read")
     public String read(Model model, int boardNo) throws Exception {
-        log.info("[GET] - /board/read");
+        log.info("[GET] - /board/read####");
 
         // 데이터 요청
         Board board = boardService.select(boardNo);     // 게시글 정보
+
+        // 게시글 선택 -> 조회 수 증가
+        int count = 1;
+        boardService.updateViews(count, boardNo);
+        int views = boardService.searchViews(boardNo);
+        board.setViews(views);
 
         // 모델 등록
         model.addAttribute("board", board);
@@ -105,7 +113,7 @@ public class BoardController {
      */
     @PostMapping(value="/insert")
     public String insertPro(@ModelAttribute Board board) throws Exception {
-        // @ModelAttribute : 모델에 자동으로 등록해주는 어노테이션
+        log.info("[GET] - /board/insert");
         // 데이터 처리
         int result = boardService.insert(board);
 
@@ -128,6 +136,7 @@ public class BoardController {
      */
     @GetMapping(value="/update")
     public String update(Model model, int boardNo) throws Exception {
+        log.info("[GET] - /board/update");
         // 데이터 요청
         Board board = boardService.select(boardNo);
         // 모델 등록
@@ -146,6 +155,7 @@ public class BoardController {
      */
     @PostMapping(value="/update")
     public String updatePro(Board board) throws Exception {
+        log.info("[POST] - /board/update");
         // 데이터 처리
         int result = boardService.update(board);
         int boardNo = board.getBoardNo();
@@ -168,12 +178,13 @@ public class BoardController {
      */
     @PostMapping(value="/delete")
     public String deletePro(int boardNo) throws Exception {
-        // 데이터 처리
+        log.info("[POST] - /board/delete");
+
         int result = boardService.delete(boardNo);
         
         // 게시글 삭제 실패 ➡ 게시글 수정 화면
         if( result == 0 ) return "redirect:/board/update?boardNo=" + boardNo;
-
+        
         // 뷰 페이지 지정
         return "redirect:/board/list";
     }
