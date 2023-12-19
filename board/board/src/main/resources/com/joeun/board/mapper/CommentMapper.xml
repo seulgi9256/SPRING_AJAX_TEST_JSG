@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace="매퍼 인터페이스 경로" --> 
+<mapper namespace="com.joeun.board.mapper.CommentMapper">
+
+    <!-- 댓글 목록 -->
+    <select id="list" resultType="Comment">
+        SELECT *
+        FROM comment
+    </select>
+
+    <!-- 조회 -->
+    <select id="select" resultType="Comment">
+        SELECT * FROM comment WHERE comment_no  = #{commentNo}
+    </select>
+
+    <!-- 댓글 등록 -->
+    <insert id="insert">
+        INSERT INTO comment(
+            parent_table, parent_no, writer, content,
+            group_no, super_no, depth_no, seq_no, sub_count, board_no
+        )
+        VALUES(
+            #{parentTable}, #{parentNo}, #{writer}, #{content},
+            #{groupNo}, #{superNo}, #{depthNo}, #{seqNo}, #{subCount}, #{boardNo}
+        )
+    </insert>
+    
+    <!-- 댓글 수정 -->
+    <update id="update">
+        UPDATE comment SET 
+            parent_table = #{parentTable},
+            parent_no = #{parentNo},
+            writer = #{writer},
+            content = #{content},
+            group_no = #{groupNo},
+            super_no = #{superNo},
+            depth_no = #{depthNo},
+            seq_no = #{seqNo},
+            reg_date = #{regDate},
+            upd_date = #{updDate},
+            sub_count = #{subCount}
+        WHERE comment_no = #{commentNo}
+    </update>
+    
+    <!-- 삭제 -->
+    <delete id="delete">
+        DELETE FROM comment WHERE comment_no = #{commentNo}
+    </delete>
+
+    <!-- 보드번호로 댓글 조회 -->
+    <select id="listByBoard" resultType="Comment">
+        SELECT *
+        FROM comment
+        WHERE parent_no = #{boardNo}
+    </select>
+
+</mapper>
