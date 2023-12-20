@@ -58,8 +58,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <!-- 좋아요 업데이트 -->
     <update id="updateLikes">
         UPDATE board
-           SET likes = likes + #{count}
+           SET likes = #{count}
         WHERE board_no = #{boardNo}
     </update>
+
+    <!--검색 및 조회-->
+    <select id="pagingSelect" parameterType="paging" resultType="datas">
+        SELECT * 
+        FROM board 
+        WHERE (RN BETWEEN #{startRow} AND #{endRow}) AND title LIKE '%'||#{keyword}||'%'
+    </select>
+
+    <!--페이징 처리를 위한 카운팅-->
+    <select id="pagingCount" parameterType="String" resultType="int">
+        SELECT COUNT(*) 
+        FROM board 
+        WHERE title LIKE '%'||#{keyword}||'%'
+    </select>
 
 </mapper>

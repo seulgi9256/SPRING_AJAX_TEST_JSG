@@ -115,7 +115,14 @@
                         <td class="regDate"><span th:text="${ #dates.format( board.regDate, 'yyyy-MM-dd HH:mm:ss') }"></span></td>
                         <td class="updDate"><span th:text="${ #dates.format( board.updDate, 'yyyy-MM-dd HH:mm:ss') }"></span></td>
                         <td class="view" th:text="${board.views}"></td>
-                        <td class="like" th:text="${board.likes}"></td>
+                        <td class="like">
+                            <span th:if="${board.getLikes().toString().equals('0')}" id="likes" class="likes">
+                                <img class="likeimg" src="/img/like0.png" alt="좋아요 미표시">
+                            </span>
+                            <span th:if="${board.getLikes().toString().equals('1')}" id="likes" class="likes">
+                                <img class="likeimg" src="/img/like1.png" alt="좋아요 표시">
+                            </span>
+                        </td>
                     </tr>
                 </table>
                 

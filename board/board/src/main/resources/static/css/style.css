@@ -580,3 +580,8 @@ img { width: 100%; }
 a {
     cursor: pointer;
 }
+
+.likeimg {
+    width: 20px;
+    height: 20px;
+}

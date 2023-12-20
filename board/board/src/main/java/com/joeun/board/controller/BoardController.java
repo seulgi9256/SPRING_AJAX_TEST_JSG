@@ -9,34 +9,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.joeun.board.dto.Board;
 import com.joeun.board.service.BoardService;
-import com.joeun.board.service.CommentService;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
-/**
- *  게시판 컨트롤러
- * - 게시글 목록            - [GET] - /board/list
- * - 게시글 조회            - [GET] - /board/read
- * - 게시글 등록            - [GET] - /board/insert
- * - 게시글 등록 처리       - [POST] - /board/insert
- * - 게시글 수정            - [GET] - /board/update
- * - 게시글 수정 처리       - [POST] - /board/update
- * - 게시글 삭제 처리       - [POST] - /board/delete
- */
-@Slf4j              // 로그 사용 어노테이션
+@Slf4j
 @Controller
 @RequestMapping("/board")
 public class BoardController {
 
     @Autowired
     private BoardService boardService;
-
-    @Autowired
-    private CommentService commentService;
 
     /**
      * 게시글 목록
@@ -57,7 +45,6 @@ public class BoardController {
         // 뷰 페이지 지정
         return "board/list";
     }
-
 
     /**
      * 게시글 조회
@@ -88,7 +75,6 @@ public class BoardController {
         // 뷰 페이지 지정
         return "board/read";
     }
-
 
     /**
      * 게시글 쓰기
@@ -144,6 +130,7 @@ public class BoardController {
         // 뷰 페이지 지정
         return "board/update";
     }
+
     /**
      * 게시글 수정 처리
      * [POST]
@@ -188,6 +175,8 @@ public class BoardController {
         // 뷰 페이지 지정
         return "redirect:/board/list";
     }
+
+
     
-    
+
 }

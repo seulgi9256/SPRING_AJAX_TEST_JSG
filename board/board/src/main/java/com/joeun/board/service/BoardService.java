@@ -29,7 +29,7 @@ public interface BoardService {
     // 조회수 업데이트
     public int updateViews(int count, int boardNo) throws Exception;
 
-    // 조회수 업데이트
-    public int updateLikes(int count, int boardNo) throws Exception;
+    // 좋아요 업데이트
+    public int updateLikes(@Param("count") int count, @Param("boardNo") int boardNo) throws Exception;
 
 }

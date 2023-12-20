@@ -59,6 +59,20 @@
                     <span class="label">조회수 : </span>
                     <span id="views" class="views" th:text="${board.views}"></span>
                 </div>
+                <!-- 좋아요 영역 -->
+                <div class="item">
+                    <span class="label">좋아요 : </span>
+
+                    <a href="javascript:;" class="btn-updateLikes">
+                        <input type="hidden" id="likes" name="likes" th:value="${board.likes}">
+                        <span th:if="${board.getLikes().toString().equals('0')}" id="likes0" class="likes">
+                            <img class="likeimg" src="/img/like0.png" alt="좋아요 미표시">
+                        </span>
+                        <span th:if="${board.getLikes().toString().equals('1')}" id="likes1" class="likes">
+                            <img class="likeimg" src="/img/like1.png" alt="좋아요 표시">
+                        </span>    
+                    </a>
+                </div>
             </div>
 
             <!-- 게시글 정보 -->
@@ -81,11 +95,11 @@
                         <td class="label">등록일자</td>
                         <td class="data"> <span th:text="${ #dates.format( board.regDate, 'yyyy-MM-dd HH:mm:ss') }"></td>
                         </tr>
-                        <tr>
-                            <td class="label">수정일자</td>
-                            <td class="data"> <span th:text="${ #dates.format( board.updDate, 'yyyy-MM-dd HH:mm:ss') }"></td>
-                            </tr> 
-                        </table>
+                    <tr>
+                        <td class="label">수정일자</td>
+                        <td class="data"> <span th:text="${ #dates.format( board.updDate, 'yyyy-MM-dd HH:mm:ss') }"></td>
+                    </tr> 
+                </table>
                         
                         <!-- 댓글 목록 -->
                         <div id="comment-list"></div>
@@ -545,6 +559,62 @@
 
         }
 
+        // 좋아요 버튼 - 클릭 이벤트
+        $('.btn-updateLikes').on('click', function() {
+            var currentLikes = parseInt($("#likes").val());
+            var newLikes = (currentLikes === 1) ? 0 : 1; // 토글 로직
+            console.log("newLikes : " + currentLikes);
+
+            updateLikes( newLikes )
+        })
+
+
+        // 좋아요 업데이트
+        function updateLikes( newLikes ) {
+
+            const url = '/likes/' + boardNo + "/" + newLikes
+            let data = {
+                'boardNo' : boardNo,
+                'count' : newLikes,
+            }
+
+            $.ajax({
+                url : url,
+                type : 'PUT',
+//                data : data,
+                data : JSON.stringify(data),
+                contentType: 'application/json',
+                success : function(response) {
+       
+                    let result = response
+                    console.log("newLikes : " + newLikes)
+
+                    if( result == '좋아요 업데이트 완료' ) {
+                        // Swal.fire(
+                        //     '완료!',
+                        //     '좋아요 업데이트 완료되었습니다.',
+                        //     'success'
+                        // )
+                        if (newLikes === 1) {
+                            $("#likes0").hide();
+                            $("#likes1").show();
+                        } else {
+                            $("#likes0").show();
+                            $("#likes1").hide();
+                        }
+                        
+                        location.href = "/board/read?boardNo=" + boardNo;
+                    }
+                },
+                error           : function(request, status, error){
+                    Swal.fire(
+                        '에러!',
+                        'code:' + request.status,
+                        'error'
+                    )
+                }
+            })
+        }
 
     </script>
 
