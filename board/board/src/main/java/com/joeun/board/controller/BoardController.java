@@ -11,9 +11,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.joeun.board.dto.Board;
+import com.joeun.board.dto.Option;
+import com.joeun.board.dto.Page;
 import com.joeun.board.service.BoardService;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @Slf4j
@@ -32,17 +36,38 @@ public class BoardController {
      * @return
      * @throws Exception
      */
-    @GetMapping(value="/list")
-    public String list(Model model) throws Exception {
-        log.info("[GET] - /board/list");
+    // @GetMapping(value="/list")
+    // public String list(Model model) throws Exception {
+    //     log.info("[GET] - /board/list");
 
-        // 데이터 요청
-        List<Board> boardList= boardService.list();
-        // 모델 등록
-        model.addAttribute("boardList", boardList);
-        // 뷰 페이지 지정
-        return "board/list";
-    }
+    //     // 데이터 요청
+    //     List<Board> boardList= boardService.list();
+    //     // 모델 등록
+    //     model.addAttribute("boardList", boardList);
+    //     // 뷰 페이지 지정
+    //     return "board/list";
+    // }
+
+    // 게시글 목록 with 페이징 처리
+	@GetMapping("/list")
+	public String list(Model model, Option option, Page page) throws Exception {
+		
+		log.info("##### 페이징 처리 전 - page #####");
+		log.info(page.toString());
+		log.info("keyword : " + option.getKeyword());
+		
+		// 게시글 목록 요청
+		List<Board> boardList = boardService.list(page, option);
+		
+		log.info("##### 페이징 처리 후 - page #####");
+		log.info(page.toString());
+		
+		// 게시글 목록 모델에 등록
+		model.addAttribute("boardList", boardList);
+		model.addAttribute("page", page);
+		
+		return "/board/list";
+	}
 
     /**
      * 게시글 조회
@@ -172,9 +197,22 @@ public class BoardController {
         
         // 뷰 페이지 지정
         return "redirect:/board/list";
+    }    
+
+    /**
+     * 
+     * [GET]
+     * /board/page
+     * model : ❌ 
+     * @return
+     */
+    @GetMapping(value="/page")
+    public String page(@ModelAttribute Board board) {
+        return "board/page";
     }
 
-
-    
-
+    @GetMapping(value="/pagination")
+    public String pagination(@ModelAttribute Board board) {
+        return "board/pagination";
+    }
 }
