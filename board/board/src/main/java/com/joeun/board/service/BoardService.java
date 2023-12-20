@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.joeun.board.dto.Board;
+import com.joeun.board.dto.Option;
+import com.joeun.board.dto.Page;
 
 public interface BoardService {
 
@@ -32,4 +34,18 @@ public interface BoardService {
     // 좋아요 업데이트
     public int updateLikes(@Param("count") int count, @Param("boardNo") int boardNo) throws Exception;
 
+    // 검색
+	public List<Board> list(String keyword) throws Exception;
+	
+	// [페이지] 게시글 목록
+	public List<Board> list(Page page) throws Exception;
+	
+	// 게시글 개수
+	public int count() throws Exception;
+	
+	// [검색][페이지] 게시글 목록
+	public List<Board> list(Page page, String keyword) throws Exception;
+
+	// [검색+옵션][페이지] 게시글 목록
+	public List<Board> list(Page page, Option option)  throws Exception;
 }
