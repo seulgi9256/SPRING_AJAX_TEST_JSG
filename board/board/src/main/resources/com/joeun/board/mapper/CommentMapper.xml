@@ -45,6 +45,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             sub_count = #{subCount}
         WHERE comment_no = #{commentNo}
     </update>
+    <!-- <update id="update">
+        UPDATE comment SET 
+            content = #{content}
+        WHERE comment_no = #{commentNo}
+    </update> -->
     
     <!-- 삭제 -->
     <delete id="delete">

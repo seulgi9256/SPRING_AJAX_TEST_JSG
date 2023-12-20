@@ -1,8 +1,19 @@
-// package com.joeun.board.dto;
+package com.joeun.board.dto;
 
-// @Getter
-// public class Page {
+import lombok.Data;
 
+@Data
+public class Page {
+    private int page; //현재 페이지
+    private int size; 
+    private int startRow;
+    private int endRow;
+    private int maxPage;
+    private int startPage;
+    private int endPage;
+
+    private String keyword; //검색 구현용 검색어
+}
     
 //     private int totalRecordCount;     // 전체 데이터 수
 //     private int totalPageCount;       // 전체 페이지 수
