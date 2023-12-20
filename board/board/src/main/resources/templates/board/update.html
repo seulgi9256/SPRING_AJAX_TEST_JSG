@@ -55,8 +55,8 @@
             </div>
 
             <!-- 게시글 수정 -->
-            <form action="/board/update" method="post">
-            <input type="hidden" name="boardNo" th:value="${board.boardNo}">
+            <form action="/board/update" method="POST" id="form">
+                <input type="hidden" name="boardNo" th:value="${board.boardNo}">
                 <table class="board">
                     <tr>
                         <td class="label">제목</td>
@@ -74,18 +74,18 @@
                         <td class="label">내용</td>
                         <td class="data">
                             <textarea name="content" id="content" cols="30" rows="10" 
-                                    class="input-textarea" th:value="${board.content}"></textarea>
+                                    class="input-textarea" th:text="${board.content}"></textarea>
                         </td>
                     </tr>
                 </table>
 
                 <div class="btn-box">
                     <div class="item">
-                        <a href="/board/list" class="btn">목록</a>
+                        <a type="button" onclick="moveList()" class="btn btn-primary">목록</a>
                     </div>
                     <div class="item">
-                        <a href="javascript:;" class="btn btn-update">수정</a>
-                        <a href="javascript:;" class="btn btn-delete">삭제</a>
+                        <a type="button" onclick="actionUpdate()" class="btn btn-primary">수정</a>
+                        <a type="button" onclick="actionDelete()" class="btn btn-primary">삭제</a>
                     </div>
                 </div>
             </form>
@@ -101,94 +101,24 @@
     <script src="../js/main.js"></script>
 
     <script>
-
-        // 현재 URL 가져오기
-        const urlParams = new URLSearchParams(location.search)
-        // ?boardNo=100   (100 <-- 글번호 가져오기)
-        let boardNo = urlParams.get('boardNo')
+        let form = document.getElementById('form')
+        // 👩‍💻 모델 객체를 자바스크립트에서 표현하는 방법
+        let boardNo = "[[${board.boardNo}]]"
         
-        if( boardNo != null ) {
-            getBoard()
-            getFileList()
+        // 목록으로 이동
+        function moveList() {
+            location.href = "/board/list"
         }
 
-        // 게시글 조회
-        function getBoard(){
-            const url = 'http://localhost/board/read?boardNo=' + boardNo
-            
-            $.ajax({
-                url     : url,
-                type    : 'GET',
-                success : function(response) {
-                    let board = response
-
-                    $('#title').val(board.title)
-                    $('#writer').val(board.writer)
-                    $('#content').val(board.content)
-                },
-                error   : function(error) {
-
-                }
-
-            })
+        // 수정 요청
+        function actionUpdate() {
+            form.submit()
         }
 
-        // 수정 버튼 - 클릭 이벤트
-        $('.btn-update').on('click', function() {
-
-            // 게시글 수정 요청
-            let url = 'http://localhost:8080/board/update?boardNo=' + boardNo
-
-            let title = $('#title').val()
-            let writer = $('#writer').val()
-            let content = $('#content').val()
-
-            $.ajax({
-                url             :   url,
-                type            :   'PUT',
-                data            :   data,
-                contentType     :   false,
-                processData     :   false,
-                success         : function(response, status) {
-                    if( response == 'SUCCESS' ){
-                        // alert('수정이 완료되었습니다.')
-                        Swal.fire(
-                            '완료!',
-                            '수정이 완료되었습니다.',
-                            'success'
-                        ).then((result) => {
-                            if( result.isConfirmed ) {
-                                // 읽기 페이지 이동
-                                location.href = 'http://localhost:8080/board/read?boardNo=' + boardNo
-                            }
-                        })
-
-                    }
-                },
-                error           : function(request, status, error){
-                    // alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-                    Swal.fire(
-                        '에러!',
-                        'code:' + request.status,
-                        'error'
-                    )
-                }
-            })
-
-
-            
-        })
-
-        // 삭제 버튼 - 클릭 이벤트
-        $('.btn-delete').on('click', function() {
-
-
-            // let check = confirm('정말로 삭제하시겠습니까?')
-            
-            // if( !check ) 
-            //     return
-
-            Swal.fire({
+        // 삭제 요청
+        function actionDelete() {
+            let check =
+                Swal.fire({
                     title: '정말로 삭제하시겠습니까?',
                     text: "삭제하면 되돌릴 수 없습니다!",
                     icon: 'warning',
@@ -198,55 +128,12 @@
                     confirmButtonText: '예',
                     cancelButtonText: '아니오',
                 }).then((result) => {
-                    // result.isConfirmed : true  [예]
-                    // result.isConfirmed : false  [아니오]
                     if (result.isConfirmed) {
-                        deleteData(boardNo)
+                        form.action = '/board/delete'
+                        form.submit()
                     }
-                })
-        })
-
-
-        // 게시글 삭제 요청
-        function deleteData() {
-            let url = 'http://localhost:8080/board'
-
-            let data = {
-                'boardNo' : boardNo
-            }
-
-            $.ajax({
-                url             :   url,
-                type            :   'DELETE',
-                data            :   data,
-                dataType        :   'text',                 // 응답 컨텐츠 타입
-                success         : function(response, status) {
-                    if( response == 'SUCCESS' ){
-                        // alert('삭제가 완료되었습니다.')
-                        Swal.fire(
-                            '완료!',
-                            '삭제가 완료되었습니다.',
-                            'success'
-                        ).then((result) => {
-                            if( result.isConfirmed ) {
-                               
-                            }
-                            // 목록 페이지로 이동
-                            location.href = 'http://localhost:8080/board/list'
-                        })
-                    }
-                },
-                error           : function(request, status, error){
-                    // alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-                    Swal.fire(
-                        '에러!',
-                        'code:' + request.status,
-                        'error'
-                    )
-                }
-            })
+                })                
         }
-
     </script>
 
 </body>

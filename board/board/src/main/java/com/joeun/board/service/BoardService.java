@@ -21,7 +21,7 @@ public interface BoardService {
     public int update(Board board) throws Exception;
 
     // 게시글 삭제
-    public int delete(int boardNo) throws Exception;
+    public int delete(@Param("boardNo") int boardNo) throws Exception;
 
     // 조회수 조회
     public int searchViews(@Param("boardNo") int boardNo) throws Exception;
