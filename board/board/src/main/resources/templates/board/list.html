@@ -57,7 +57,7 @@
             <!-- 검색/필터 -->
             <div class="btn-box">
                 <!-- 검색 -->
-                <div class="item">
+                <!-- <div class="item">
                     <select name="search-type" id="search-type" class="input-search">
                         <option value="0">전체</option>
                         <option value="1">제목</option>
@@ -67,9 +67,9 @@
                     </select>
                     <input type="text" name="keyword" id="keyword" class="input-search">
                     <a href="javascript:;" class="btn" id="btn-search">검색</a>
-                </div>
+                </div> -->
                 <!-- 필터 -->
-                <div class="item">
+                <!-- <div class="item">
                     <select name="rows" id="rows" class="input-search">
                         <option value="5">5개씩 보기</option>
                         <option value="10">10개씩 보기</option>
@@ -83,16 +83,16 @@
                         <option value="1">오래된 순</option>
                         <option value="2">조회수 순</option>
                     </select>
-                </div>
+                </div> -->
                 <div class="item">
                     <a href="../board/insert" class="btn">글쓰기</a>
                 </div>
             </div>
 
             <!-- 게시글 수 -->
-            <div class="info">
-                <p>게시글 <span id="totalCount">0</span> 건이 조회되었습니다.</p>
-            </div>
+            <!-- <div class="info">
+                <p>게시글 <span id="totalCount">{totalCount}</span> 건이 조회되었습니다.</p>
+            </div> -->
 
             <!-- 게시글 목록 -->
             <table class="board">
@@ -133,33 +133,26 @@
                         </tr>
                     </th:block>
                 </th:block>
-            </tbody>
-
-            <!-- 페이지네이션 -->
-            <div class="pagination">
-                <a href="javascript:;" class="page-arrow" id="first">&laquo;</a>
-                <a href="javascript:;" class="page-arrow" id="prev">&lsaquo;</a>
-
-                <!-- 페이지 번호 목록 -->
-                <div class="page-list">
-                    <a href="javascript:;" class="page-no">1</a>
-                    <a href="javascript:;" class="page-no">2</a>
-                    <a href="javascript:;" class="page-no">3</a>
-                    <a href="javascript:;" class="page-no">4</a>
-                    <a href="javascript:;" class="page-no">5</a>
-                    <a href="javascript:;" class="page-no">6</a>
-                    <a href="javascript:;" class="page-no">7</a>
-                    <a href="javascript:;" class="page-no">8</a>
-                    <a href="javascript:;" class="page-no">9</a>
-                    <a href="javascript:;" class="page-no">10</a>
-                </div>
-
-                <a href="javascript:;" class="page-arrow" id="next">&rsaquo;</a>
-                <a href="javascript:;" class="page-arrow" id="last">&raquo;</a>
-            </div>
-
-
-
+            </tbody>       
+    
+            <tfoot>
+                <tr>
+                    <td colspan="5">
+                        <!-- 페이지네이션 -->
+                        <div class="pagination">
+                            <a href="javascript:;" class="page-arrow" id="first">&laquo;</a>
+                            <a href="javascript:;" class="page-arrow" id="prev">&lsaquo;</a>
+                            
+                            <span class="page-list">
+                                <a href="javascript:;" class="page-no">1</a>
+                            </span>
+                            
+                            <a href="javascript:;" class="page-arrow" id="next">&rsaquo;</a>
+                            <a href="javascript:;" class="page-arrow" id="last">&raquo;</a>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
         </div>
     </section>
 
@@ -168,39 +161,39 @@
 
     <script>
         // 페이지 관련 변수
-        let page = 1            // 현재 페이지 번호
+        let pageNum = 1            // 현재 페이지 번호
         let rows = 10           // 페이지당 게시글 수
         let pageCount = 10      // 노출 페이지 개수
         let totalCount = 0      // 전체 게시글 수
         // 검색 관련 변수
-        let searchType = 0      // 검색 조건
-        let keyword = ''        // 검색어
+        // let searchType = 0      // 검색 조건
+        // let keyword = ''        // 검색어
 
-        let order = 0;
+        // let order = 0;
 
         // 게시글 목록 요청
         // getList()
-        getPageList()
-        initPage()
-        initRows()
+        getPageList(pageNum)
+        initPage(pageNum)
+        initRows(pageNum)
 
         // 게시글 목록
-        function getList() {
-            const url = 'http://localhost:8080/board'
+        // function getList() {
+        //     const url = 'http://localhost:8080/board/list'
 
-            $.ajax({
-                url     :   url,
-                type    :   'GET',
-                success : function(response) {
-                    let boardList = response
+        //     $.ajax({
+        //         url     :   url,
+        //         type    :   'GET',
+        //         success : function(response) {
+        //             let boardList = response
 
-                    displayList( boardList )
-                },
-                error           : function(request, status, error){
-                    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-                }
-            })
-        }
+        //             displayList( boardList )
+        //         },
+        //         error           : function(request, status, error){
+        //             alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+        //         }
+        //     })
+        // }
 
         
         // 페이지 번호
@@ -208,12 +201,12 @@
 
             // 페이지 번호 정보
             let data = {
-                'pageNo'         : page,
-                'rows'           : rows,
+                'pageNum'        : pageNum,
+                'rowsPerPage'    : rows,
                 'pageCount'      : pageCount,
                 'totalCount'     : totalCount,
-                'searchType'     : searchType,
-                'keyword'        : keyword,
+                // 'searchType'     : searchType,
+                // 'keyword'        : keyword,
             }
 
             const url = 'http://localhost:8080/board/pagination'
@@ -232,7 +225,7 @@
                     let last = pageInfo.lastPage
                     let prev = pageInfo.prev
                     let next = pageInfo.next
-
+      
                     // 게시글 건 수
                     let totalCount = pageInfo.totalCount
                     $('#totalCount').text(totalCount)
@@ -253,15 +246,15 @@
 
                     $('.page-no').removeClass('on')
                     // 현재 페이지 지정
-                    $('.page-no[data=' + page +']').addClass('on')
+                    $('.page-no[data=' + pageNum +']').addClass('on')
 
                     // 화살표 버튼 유효성 처리
                     $('.page-arrow').show()
-                    if( page == 1 ) {
+                    if( pageNum == 1 ) {
                         $('#prev').hide()
                     }
                     
-                    if( page == last ) {
+                    if( pageNum == last ) {
                         $('#next').hide()
                     }
 
@@ -274,7 +267,7 @@
                         
                         // 페이지 번호
                         let clickedPage = $(this).attr('data')
-                        page = clickedPage
+                        pageNum = clickedPage
                         initPage()          // 페이지 번호 갱신
                         getPageList()       // 페이지 목록 갱신
                     })
@@ -294,11 +287,11 @@
             const url = 'http://localhost:8080/board/page'
 
             let data = {
-                pageNo      : page,
-                rows        : rows,
-                pageCount   : pageCount,
-                searchType  : searchType,
-                keyword     : keyword,
+                pageNum             : pageNum,
+                rowsPerPage         : rows,
+                pageCount           : pageCount,
+                // searchType  : searchType,
+                // keyword     : keyword,
             }
 
             $.ajax({
@@ -355,14 +348,14 @@
 
 
         // 검색 클릭 이벤트
-        $('#btn-search').on('click', function() {
-            search()
-        })
+        // $('#btn-search').on('click', function() {
+        //     search()
+        // })
 
         // 페이지당 게시글 수 - 변경 이벤트
         $('#rows').on('change', function() {
             rows = $(this).val()
-            page = 1
+            pageNum = 1
             getPageList()
             initPage()
         })
@@ -376,87 +369,87 @@
 
 
         // 검색 - 키 입력 이벤트
-        $('#keyword').on('keyup', function(event) {
-            console.log( event.keyCode );
+        // $('#keyword').on('keyup', function(event) {
+        //     console.log( event.keyCode );
 
-            // 엔터
-            // if( event.keyCode == 13 ) {
-                search()
-            // }
-        })
+        //     // 엔터
+        //     // if( event.keyCode == 13 ) {
+        //         search()
+        //     // }
+        // })
 
 
         // 검색
-        function search() {
-            // 검색 조건 (serach-type)
-            // 검색어    (keyword)
-            searchType = $('#search-type').val()
-            keyword = $('#keyword').val()
+        // function search() {
+        //     // 검색 조건 (serach-type)
+        //     // 검색어    (keyword)
+        //     searchType = $('#search-type').val()
+        //     keyword = $('#keyword').val()
 
-            let data = {
-                searchType  : searchType,
-                keyword     : keyword,
-                rows        : rows,
-                page        : page,
-                pageCount   : pageCount,
-            }
+        //     let data = {
+        //         searchType  : searchType,
+        //         keyword     : keyword,
+        //         rows        : rows,
+        //         page        : page,
+        //         pageCount   : pageCount,
+        //     }
 
-            const url = 'http://localhost:8080/board/list'
+        //     const url = 'http://localhost:8080/board/list'
 
-            $.ajax({
-                url     :   url,
-                type    :   'GET',
-                data    :   data,
-                success :   function(response) {
-                    let boardList = response
+        //     $.ajax({
+        //         url     :   url,
+        //         type    :   'GET',
+        //         data    :   data,
+        //         success :   function(response) {
+        //             let boardList = response
 
-                    displayList(boardList)
+        //             displayList(boardList)
 
-                    page = 1
-                    initPage()
+        //             page = 1
+        //             initPage()
 
-                },
-                error   : function(request, status, error){
-                    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-                }
-            })
-        }
+        //         },
+        //         error   : function(request, status, error){
+        //             alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+        //         }
+        //     })
+        // }
 
 
           // 순서 필터 - 변경 이벤트
-          $('#order').on('change', function() {
+        //   $('#order').on('change', function() {
                 
-                // 검색 조건 (search-type)
-                // 검색어 (keyword)
-                order = $(this).val()
+        //         // 검색 조건 (search-type)
+        //         // 검색어 (keyword)
+        //         order = $(this).val()
 
-                let data = {
-                    searchType  : searchType,
-                    keyword     : keyword,
-                    rows        : rows,
-                    page        : page,
-                    pageCount   : pageCount,
-                    order       : order,
-                }
-                const url = 'http://localhost:8080/board/order'
+        //         let data = {
+        //             searchType  : searchType,
+        //             keyword     : keyword,
+        //             rows        : rows,
+        //             page        : page,
+        //             pageCount   : pageCount,
+        //             order       : order,
+        //         }
+        //         const url = 'http://localhost:8080/board/order'
 
-              $.ajax({
-                  url         : url,
-                  type        : 'GET',
-                  data        : data,
-                  success     : function(response) {
-                      let boardList = response
+        //       $.ajax({
+        //           url         : url,
+        //           type        : 'GET',
+        //           data        : data,
+        //           success     : function(response) {
+        //               let boardList = response
 
-                      displayList(boardList)
+        //               displayList(boardList)
 
-                      page = 1
-                      initpage()
-                  },
-                  error       : function() {
+        //               page = 1
+        //               initpage()
+        //           },
+        //           error       : function() {
 
-                  }
-              })
-              })
+        //           }
+        //       })
+        //       })
 
     </script>
 

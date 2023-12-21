@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.joeun.board.dto.Board;
 import com.joeun.board.dto.Option;
@@ -16,7 +17,6 @@ import com.joeun.board.dto.Page;
 import com.joeun.board.service.BoardService;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 
@@ -206,13 +206,28 @@ public class BoardController {
      * model : ❌ 
      * @return
      */
-    @GetMapping(value="/page")
-    public String page(@ModelAttribute Board board) {
-        return "board/page";
+    @ResponseBody
+    @GetMapping("/page")
+    public List<Board> page(int pageNum) throws Exception {
+        int rows = 10;
+        int start = rows * (pageNum - 1);
+
+        Page page = new Page();
+        page.setPageNum(pageNum);
+        page.setStartPage(start);
+        page.setRowsPerPage(rows);
+        
+        List<Board> boardList = boardService.list(page);
+
+        return boardList;
     }
 
-    @GetMapping(value="/pagination")
-    public String pagination(@ModelAttribute Board board) {
-        return "board/pagination";
+    @ResponseBody
+    @GetMapping("/pagination") 
+    public Page pagination(Page page) throws Exception {
+        int result = boardService.count();
+        page.setTotalCount(result);
+		page.calc(page);
+        return page;
     }
 }
