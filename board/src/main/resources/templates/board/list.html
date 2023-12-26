@@ -157,7 +157,6 @@
     </section>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="../js/main.js"></script>
 
     <script>
         // 페이지 관련 변수
@@ -170,7 +169,7 @@
         // let keyword = ''        // 검색어
 
         // let order = 0;
-
+        let index = 0;
         // 게시글 목록 요청
         // getList()
         getPageList()
@@ -225,7 +224,10 @@
                     let last = pageInfo.lastPage
                     let prev = pageInfo.prev
                     let next = pageInfo.next
-      
+                    let index = pageInfo.index
+
+                    console.log("1index : " + index);
+
                     // 게시글 건 수
                     let totalCount = pageInfo.totalCount
                     $('#totalCount').text(totalCount)
@@ -267,9 +269,12 @@
                         
                         // 페이지 번호
                         let clickedPage = $(this).attr('data')
-                        pageNum = clickedPage
+                        pageNum = parseInt(clickedPage);
+                        console.log("pageNum : " + pageNum);
+                        console.log("2index : " + index);
                         initPage()          // 페이지 번호 갱신
-                        getPageList()       // 페이지 목록 갱신
+                        getPageList()
+                        // getPageList()       // 페이지 목록 갱신
                     })
 
 
@@ -284,6 +289,8 @@
 
         // 게시글 목록 - 페이징
         function getPageList() {
+            console.log("getPageList");
+            console.log("3index : " + index);
             const url = 'http://localhost:8080/board/page'
 
             let data = {
@@ -317,7 +324,7 @@
                 console.log(msg);
 
                 let tr = `<tr>
-                            <td colspan="5">${msg}</td>
+                            <td colspan="7">${msg}</td>
                             </tr>
                             `
                 $('#board-data').html(tr)
@@ -328,19 +335,41 @@
             let boardData = ''
             for(let i = 0 ; i < boardList.length ; i++ ){
                 const boardNo = boardList[i].boardNo
-                const title = `<a href='read.html?boardNo=${boardNo}'>${boardList[i].title}</a>`
+                const title = `<a href='/board/read?boardNo=${boardNo}'>${boardList[i].title}</a>`
 
-                const date = new Date(boardList[i].date)
-                const regDate = date.toISOString().split("T")[0]
+                // const date = new Date(boardList[i].date)
+                // const regDate = date.toISOString().split("T")[0]
 
-                let tr = `<tr>
+                // 날짜를 Date 객체로 변환
+                const regDate = boardList[i].regDate ? new Date(boardList[i].regDate) : null;
+                const updDate = boardList[i].updDate ? new Date(boardList[i].updDate) : null;
+
+                // 날짜가 유효한 경우에만 변환 후 ISO 문자열로 변환
+                const formattedRegDate = regDate ? regDate.toISOString().split("T")[0] : '';
+                const formattedUpdDate = updDate ? updDate.toISOString().split("T")[0] : '';
+
+                const like = boardList[i].likes;
+                const likeElement = document.querySelector('.likes');
+
+                let likeImg = '';
+                if (like === 0) {
+                    likeImg = '<img class="likeimg" src="/img/like0.png" alt="좋아요 미표시">';
+                } else if (like === 1) {
+                    likeImg = '<img class="likeimg" src="/img/like1.png" alt="좋아요 표시">';
+                }
+
+                let tr = `
+                        <tr>
                             <td class='num'>${boardList[i].boardNo}</td>
                             <td class='title'>${title}</td>
                             <td class='writer'>${boardList[i].writer}</td>
-                            <td class='date'>${regDate}</td>
+                            <td class='date'>${formattedRegDate}</td>
+                            <td class='date'>${formattedUpdDate}</td>
                             <td class='view'>${boardList[i].views}</td>
-                            </tr>
-                            `
+                            <td class='likes'>${likeImg}</td>
+                            <tr>
+                                `
+
                 boardData += tr
             }
             $('#board-data').html(boardData)

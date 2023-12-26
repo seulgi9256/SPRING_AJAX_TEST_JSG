@@ -208,7 +208,7 @@ public class BoardController {
      */
     @ResponseBody
     @GetMapping("/page")
-    public List<Board> page(int pageNum) throws Exception {
+    public List<Board> page(int pageNum, Model model) throws Exception {
         int rows = 10;
         int start = rows * (pageNum - 1);
 
@@ -216,7 +216,9 @@ public class BoardController {
         page.setPageNum(pageNum);
         page.setStartPage(start);
         page.setRowsPerPage(rows);
+        page.setIndex(start);
         
+        model.addAttribute("page", page);
         List<Board> boardList = boardService.list(page);
 
         return boardList;
